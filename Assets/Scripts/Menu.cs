@@ -23,7 +23,7 @@ public class Menu : MonoBehaviour
     void Awake()
     {
         Init();
-        MainMenu = T.LoadT("")
+        MainMenu = T.LoadT("Items").GetComponent(typeof(Menu)) as Menu;
     }
 
     private void Init()
@@ -161,9 +161,9 @@ public class Menu : MonoBehaviour
                 bInSubMenu = false;
                 T.Log("Back");
                 SetActive(false);
-                if (this.MainMenu != null)
+                if (MainMenu != null)
                 {
-                    this.MainMenu.SetActive(true);
+                    MainMenu.SetActive(true);
                 }
             }
         }
