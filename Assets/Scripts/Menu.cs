@@ -8,165 +8,128 @@ public enum MenuItems
     Credits
 };
 
-
 public class Menu : MonoBehaviour
 {
-    public Button[] buttons;
-    public bool[] bActive;
-    public bool[] bSubMenu;
-    public Menu[] SubMenu;
-    static protected bool bInSubMenu;
     static public Menu MainMenu;
+
+    public bool bMenuEnable;
+    public Button[] Buttons;
+    public Menu[] SubMenu;
 
     private int iCurrentEnable;
     private bool bInit = false;
+
     void Awake()
     {
         Init();
-        MainMenu = T.LoadT("Items").GetComponent(typeof(Menu)) as Menu;
     }
 
     private void Init()
     {
         if (!bInit)
         {
-            iCurrentEnable = 0; 
-            Inputs.Init();
-            bInSubMenu = false;
+            if (Menu.MainMenu == null) MainMenu = T.LoadT("Items").GetComponent(typeof(Menu)) as Menu;
+            this.bInit = true;
             T.Log("Init");
-            bInit = true;
         }
-        HideSubMenus();
-        SetButtonActive();
         UpdateButtonStates();
-    }
-
-    void Update()
-    {
-        if (!bInSubMenu && iCurrentEnable >= 0 )
-        {
-            UpdateButtonStates();
-            if( UpdateInputs() )
-            {
-                SetButtonActive();
-            }
-        }
+        if( SubMenu.Length > 0 ) HideSubMenus();
     }
 
     public void SetActive(bool _active)
     {
         if (!bInit) Init();
-        T.SetHierarchyVisibility(this.transform, _active);
-        if (_active)
-            iCurrentEnable = 0;
-        else
-            iCurrentEnable = -1;
-        SetButtonActive();
+
+        this.bMenuEnable = _active;
+
+        T.SetHierarchyVisibility( this.transform, this.bMenuEnable );
+        
+        this.UpdateButtonStates();
+    }
+
+    void Update()
+    {
+        if ( this.bMenuEnable )
+        {
+            UpdateButtonStates();
+            UpdateInputs();
+        }
+    }
+
+    private void UpdateButtonStates()
+    {
+        for (int i = 0; i < Buttons.Length; i++)
+        {
+            if( i == this.iCurrentEnable )
+                Buttons[i].SetSelected(true);
+            else
+                Buttons[i].SetSelected(false);
+        }
+    }
+
+    private void ButtonVisibility( bool _visible)
+    {
+        for (int i = 0; i < Buttons.Length; i++)
+        {
+            Buttons[i].SetVisible(_visible);
+        }
     }
 
     private void HideSubMenus()
     {
         if (!bInit) Init();
         T.Log("Hide SubMenus");
-        int iIndex = 0;
-        foreach (bool b in bSubMenu)
+        for (int iIndex = 0; iIndex < Buttons.Length; iIndex++)
         {
-            if (b)
+            if (SubMenu[iIndex] != null)
             {
                 SubMenu[iIndex].SetActive(false);
             }
-            iIndex++;
         }
     }
 
-    private void SetButtonActive()
+    private void UpdateInputs()
     {
-        if (!bInit) Init();
-        T.Log("Set button Active");
-        for (int i = 0; i < bActive.Length; ++i)
-        {
-            if (i == iCurrentEnable)
-                this.bActive[i] = true;
-            else
-                this.bActive[i] = false;
-        }
-    }
 
-    private void UpdateButtonStates()
-    {
-        int iIndex = 0;
-        foreach (Button b in buttons)
+        if(Inputs.Press(InputKb.Down) || Inputs.Press(InputKb.Left) )
         {
-            b.SetSelected(bActive[iIndex]);
-            iIndex++;
+            iCurrentEnable = iCurrentEnable < this.Buttons.Length - 1? iCurrentEnable+1 : 0;
         }
-    }
-
-    private bool UpdateInputs()
-    {
-        bool bResult = false;
-
-        if(Inputs.IsTrigger(InputKb.Up))
+        if(Inputs.Press(InputKb.Up) || Inputs.Press(InputKb.Right) )
         {
-            bResult = true;
-            iCurrentEnable++;
+            iCurrentEnable = iCurrentEnable > 0 ? iCurrentEnable-1 : this.Buttons.Length - 1;
         }
-        if(Inputs.IsTrigger(InputKb.Left))
+             /*
+        if( Inputs.Press(InputKb.Enter) )
         {
-            bResult = true;
-            iCurrentEnable++;
-        }
-        if(Inputs.IsTrigger(InputKb.Down))
-        {
-            bResult = true;
-            iCurrentEnable--;
-        }
-        if(Inputs.IsTrigger(InputKb.Right))
-        {
-            bResult = true;
-            iCurrentEnable--;
-        }
-
-        if(iCurrentEnable < 0)
-        {
-            iCurrentEnable = buttons.Length - 1;
-        }
-        if(iCurrentEnable >= buttons.Length )
-        {
-            iCurrentEnable = 0;
-        }
-
-        if (Inputs.IsTrigger(InputKb.Space) || Inputs.IsTrigger(InputKb.Enter))
-        {
-            if(buttons[iCurrentEnable].sName == "Play" )
-                Application.LoadLevel(1);
-            if(buttons[iCurrentEnable].sName == "Instructions")
+            switch (this.Buttons[this.iCurrentEnable].sName)
             {
-                bInSubMenu = true;
-                T.Log("Instructions");
-                T.SetHierarchyVisibility(this.transform, false);
-            }
-            if(buttons[iCurrentEnable].sName == "Credits")
-            {
-                bInSubMenu = true;
-                T.Log("Credits");
-                SetActive(false);
-                if (bSubMenu[iCurrentEnable] && SubMenu[iCurrentEnable] != null)
-                {
+                case "Play":
+                    Application.LoadLevel(1);
+                    break;
+                case "Instructions":
+                    bInSubMenu = true;
+                    T.Log("Instructions");
+                    SetActive( false );
                     SubMenu[iCurrentEnable].SetActive(true);
-                }
+                    T.SetHierarchyVisibility(this.transform, false);
+                    break;
+                case "Credits":
+                      bInSubMenu = true;
+                    T.Log("Credits");
+                    SetActive(false);
+                    //SubMenu[iCurrentEnable].SetActive(true);
+                    break;
+                case "Back":
+                    bInSubMenu = false;
+                    T.Log("Back");
+                    SetActive(false);
+                    if (MainMenu != null)
+                    {
+                        MainMenu.SetActive(true);
+                    }
+                    break;
             }
-            if( buttons[iCurrentEnable].sName == "Back")
-            {
-                bInSubMenu = false;
-                T.Log("Back");
-                SetActive(false);
-                if (MainMenu != null)
-                {
-                    MainMenu.SetActive(true);
-                }
-            }
-        }
-        return bResult;
+        }   */
     }
 }

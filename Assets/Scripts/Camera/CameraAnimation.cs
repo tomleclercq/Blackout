@@ -6,14 +6,13 @@ public class CameraAnimation : MonoBehaviour {
     public float fAmplitude = 2;
 
     private float fTimer;
-    private Vector3 position_current, position_previous, position_origin;
+    private Vector3 position_current, position_origin;
 
 
 	// Use this for initialization
 	void Start () {
         this.position_origin = this.transform.position;
         this.position_current = this.position_origin;
-        this.position_previous = this.position_current;
         fTimer = 0f;
     }
 

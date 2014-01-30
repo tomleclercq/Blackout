@@ -124,30 +124,30 @@ public class Helper : MonoBehaviour {
             }
         }
 
-        if (Inputs.IsTrigger(KeysHelp.Escape) || bMouseTrigged)
+        if (Inputs.Press(KeysHelp.Escape) || bMouseTrigged)
         {
             fInputDelay = 0.0f;
             Application.Quit();
         }
 
 
-        if (Inputs.IsTrigger(KeysHelp.Delete))
+        if (Inputs.Press(KeysHelp.Delete))
         {
             PlayerPrefs.DeleteAll ();
             T.LogW("Player pref erased");
         }
 
-        if (Inputs.IsTrigger(KeysHelp.C))
+        if (Inputs.Press(KeysHelp.C))
         {
             bShowCursor = !bShowCursor;
             Screen.showCursor = bShowCursor;
             T.Log("Cursor toggle",TColors.BlueNavy);  
         }
 
-        if (Inputs.IsTrigger(KeysHelp.H))
+        if (Inputs.Press(KeysHelp.H))
             bShowHelp =!bShowHelp;
 
-        if (Inputs.IsTrigger(KeysHelp.F))
+        if (Inputs.Press(KeysHelp.F))
         {
             bShownFPS = !bShownFPS;
         }               

@@ -19,7 +19,7 @@ public class Inputs : MonoBehaviour
     static public KeyCode kcUp = KeyCode.UpArrow;
     static public KeyCode kcLeft = KeyCode.LeftArrow;
     static public KeyCode kcDown = KeyCode.DownArrow;
-    static public KeyCode kcRight = KeyCode.UpArrow;
+    static public KeyCode kcRight = KeyCode.RightArrow;
     static public KeyCode kcSpace = KeyCode.Space;
     static public KeyCode kcEnter = KeyCode.Return;
     static public KeyCode kcCtrlR = KeyCode.RightControl;
@@ -28,13 +28,12 @@ public class Inputs : MonoBehaviour
     public KeyCode Up = KeyCode.UpArrow;
     public KeyCode Left = KeyCode.LeftArrow;
     public KeyCode Down = KeyCode.DownArrow;
-    public KeyCode Right = KeyCode.UpArrow;
+    public KeyCode Right = KeyCode.RightArrow;
     public KeyCode Space = KeyCode.Space;
     public KeyCode Enter = KeyCode.Return;
     public KeyCode CtrlR = KeyCode.RightControl;
     public KeyCode CtrlL = KeyCode.LeftControl;
 
-    static private ArrayList lList = new ArrayList();
     static public KeyCode[] KeysGame;
 
     static public KeyCode[] keyCodesHelper;
@@ -53,28 +52,28 @@ public class Inputs : MonoBehaviour
     }
 
 
-    static public bool IsTrigger(InputKb _Input)
+    static public bool Press(InputKb _Input)
     {
         bool bResult = Input.GetKeyDown(keyCodesGame[(int)_Input]);
-        if (bResult) T.DbgLog("-" + _Input.ToString() + "- Hold", TColors.White);
+        if (bResult) T.Log("-" + _Input.ToString() + "- Press", TColors.White);
         return bResult;
     }
 
-    static public bool IsHold(InputKb _Input)
+    static public bool Hold(InputKb _Input)
     {
         bool bResult = Input.GetKey(keyCodesGame[(int)_Input]);
-        if (bResult) T.DbgLog("-" + _Input.ToString() + "- Hold", TColors.White);
+        if (bResult) T.Log("-" + _Input.ToString() + "- Hold", TColors.White);
         return bResult;
     }
 
-    static public bool IsTrigger(KeysHelp _Input)
+    static public bool Press(KeysHelp _Input)
     {
         bool bResult = Input.GetKeyDown(keyCodesHelper[(int)_Input]);
-        if (bResult) T.DbgLog("-" + _Input.ToString() + "- Press", TColors.White);
+        if (bResult) T.Log("-" + _Input.ToString() + "- Press", TColors.White);
         return bResult;
     }
 
-    static public bool IsHold(KeysHelp _Input)
+    static public bool Hold(KeysHelp _Input)
     {
         bool bResult = Input.GetKey(keyCodesHelper[(int)_Input]);
         if (bResult) T.DbgLog("-" + _Input.ToString() + "- Hold", TColors.White);

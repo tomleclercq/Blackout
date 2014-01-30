@@ -3,18 +3,28 @@ using System.Collections;
 
 public class Button : MonoBehaviour {
 
-    public Transform tEnable;
-    public Transform tDisable;
+    public Transform tSelected;
+    public Transform tUnSelected;
+    public bool bDisplayed = true ;
     public string sName = "BtnName";
 
     void Start () {
-        SetSelected( false );
+        this.SetSelected(false);
+        this.SetVisible( bDisplayed );
     }
     
     // Update is called once per frame
-    public void SetSelected(bool _enable)
+    public void SetSelected(bool _selected)
     {
-        tEnable.renderer.enabled = !_enable;
-        tDisable.renderer.enabled = _enable;
+        this.tSelected.renderer.enabled = !_selected;
+        this.tUnSelected.renderer.enabled = _selected;
+    }
+
+    // Update is called once per frame
+    public void SetVisible( bool _visible )
+    {
+        bDisplayed = _visible;
+        this.tSelected.renderer.enabled = this.bDisplayed;
+        this.tUnSelected.renderer.enabled = this.bDisplayed;
     }
 }

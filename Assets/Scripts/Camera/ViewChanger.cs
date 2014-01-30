@@ -10,16 +10,9 @@ public class ViewChanger : MonoBehaviour
         Down
     }
 
-    private Camera _Camera;
-
     public Player[] _Players =new Player[0];
     
-	// Use this for initialization
-	void Start ()
-    {
-        _Camera = gameObject.GetComponent<Camera>();
-	}
-	
+
 	// Update is called once per frame
 	void Update () 
     {
