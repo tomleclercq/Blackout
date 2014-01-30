@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Ship_Player_Shield
+  m_Shader: {fileID: 4800000, guid: a2f0404b244a24d40becf880a7951d59, type: 3}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 9eea4f0d9ed7b7040942be442dfc76f8, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MainShield
+        second:
+          m_Texture: {fileID: 2800000, guid: 404a5b16a5c03ee4fae7d9f1b2e774d5, type: 3}
+          m_Scale: {x: 2, y: 1.20000005}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _SecondShield
+        second:
+          m_Texture: {fileID: 2800000, guid: e78909bd5e3ad3643810dbb96b2b1e7c, type: 3}
+          m_Scale: {x: 2, y: 1.20000005}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _CloudTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 9eea4f0d9ed7b7040942be442dfc76f8, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _CloudTex2
+        second:
+          m_Texture: {fileID: 2800000, guid: 9eea4f0d9ed7b7040942be442dfc76f8, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _DesolveSlider
+        second: 0
+      data:
+        first:
+          name: _AlphaSlider
+        second: .642857194
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _MainColor
+        second: {r: .615686297, g: .498039186, b: .996078372, a: .588235319}
+      data:
+        first:
+          name: _node636
+        second: {r: .5, g: .5, b: .5, a: 1}
