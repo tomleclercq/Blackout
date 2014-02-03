@@ -1,30 +1,51 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum ButtonTypes
+{
+    Play = 0,
+    Instructions,
+    Credits,
+    Back
+};
+
 public class Button : MonoBehaviour {
 
+    public ButtonTypes Type;
+    public bool bDisplayed = true;
+    public bool bSelected = false;
     public Transform tSelected;
     public Transform tUnSelected;
-    public bool bDisplayed = true ;
-    public string sName = "BtnName";
 
-    void Start () {
-        this.SetSelected(false);
-        this.SetVisible( bDisplayed );
+    void Update()
+    {
+        if( !this.bDisplayed )
+            this.Hide();
+        else
+            this.DisplaySelected();
     }
-    
-    // Update is called once per frame
+
     public void SetSelected(bool _selected)
     {
-        this.tSelected.renderer.enabled = !_selected;
-        this.tUnSelected.renderer.enabled = _selected;
+        this.bSelected = _selected;
+        this.DisplaySelected();
+       if( _selected )T.Log("btn " + this.Type.ToString() + " selected");
     }
 
-    // Update is called once per frame
-    public void SetVisible( bool _visible )
+    public void SetVisible(bool _visible)
     {
-        bDisplayed = _visible;
-        this.tSelected.renderer.enabled = this.bDisplayed;
-        this.tUnSelected.renderer.enabled = this.bDisplayed;
+        this.bDisplayed = _visible;
+    }
+
+    private void DisplaySelected()
+    {
+        this.tSelected.renderer.enabled = !this.bSelected;
+        this.tUnSelected.renderer.enabled = this.bSelected;
+    }
+
+    private void Hide()
+    {
+        this.tSelected.renderer.enabled = false;
+        this.tUnSelected.renderer.enabled = false;
     }
 }

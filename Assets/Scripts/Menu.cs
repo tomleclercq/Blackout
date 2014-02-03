@@ -1,21 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum MenuItems
+public enum MenuTypes
 {
-    Play=0,
+    Main = 0,
     Instructions,
-    Credits
+    Credits,
+    Any,
 };
 
 public class Menu : MonoBehaviour
 {
-    static public Menu MainMenu;
+    static public Menu Main = null ;
+    static public Menu[] List = null;
+    static public MenuTypes TypeCurrent = MenuTypes.Any;
 
-    public bool bMenuEnable;
+    public MenuTypes Type;
+    public bool bEnable;
     public Button[] Buttons;
-    public Menu[] SubMenu;
+    public Menu[] SubMenus;
+    public Transform tDisplay;
 
+    static private bool bStaticInit = false;
     private int iCurrentEnable;
     private bool bInit = false;
 
@@ -26,110 +32,159 @@ public class Menu : MonoBehaviour
 
     private void Init()
     {
-        if (!bInit)
+        if (!this.bInit)
         {
-            if (Menu.MainMenu == null) MainMenu = T.LoadT("Items").GetComponent(typeof(Menu)) as Menu;
+            T.Log("Init Begin for menu " + this.Type.ToString()+">");
+            if ( !Menu.bStaticInit && this.Type == MenuTypes.Main )
+            {
+                T.Log(">" + "Init Menu.bStaticInit");
+
+                Menu.TypeCurrent = this.Type;
+                if (Menu.TypeCurrent != MenuTypes.Main)
+                {
+                    Menu.Main = T.LoadT("MainMenu").GetComponent(typeof(Menu)) as Menu;
+                }
+                else
+                {
+                    Menu.Main = this;
+                }
+                Menu.List = new Menu[this.SubMenus.Length + 1];
+                Menu.List[0] = Menu.Main;
+                for (int iIndex = 0 + 1; iIndex < this.SubMenus.Length + 1; iIndex++)
+                {
+                    Menu.List[iIndex] = this.SubMenus[iIndex - 1];
+                    T.Log(">"+iIndex+"# subMenu type is "+Menu.List[iIndex].Type.ToString());
+                }
+                Menu.bStaticInit = true;
+            }
+
+            if (this.bEnable)
+            {
+                Menu.TypeCurrent = this.Type;
+            }
+            this.UpdateDisplaysStates();
+
             this.bInit = true;
-            T.Log("Init");
+            T.Log("> menu "+this.Type.ToString()+ " Initialized");
         }
-        UpdateButtonStates();
-        if( SubMenu.Length > 0 ) HideSubMenus();
     }
 
-    public void SetActive(bool _active)
+    static public void ChangeTo(MenuTypes _type)
     {
-        if (!bInit) Init();
+        T.Log("Change to"+_type.ToString()+">");
+        Menu next = Menu.FindOfType( _type );
+        next.SetStatus( true );
+        T.Log(">"+_type.ToString() + " Enable");
+    }
 
-        this.bMenuEnable = _active;
+    static public Menu FindOfType(MenuTypes _wantedType)
+    {
+        Menu menu = Menu.List[0];
 
-        T.SetHierarchyVisibility( this.transform, this.bMenuEnable );
-        
-        this.UpdateButtonStates();
+        foreach (Menu m in Menu.List)
+        {
+            if (m.Type == _wantedType)
+            {
+                menu = m;
+                break;
+            }
+        }
+        return menu;
+    }
+
+    public void SetStatus(bool _status)
+    {
+        if (!this.bInit) this.Init();
+        this.bEnable = _status;
+        this.UpdateDisplaysStates();
+        DisplaysVisibility(_status);
     }
 
     void Update()
     {
-        if ( this.bMenuEnable )
+        if (this.bEnable)
         {
-            UpdateButtonStates();
-            UpdateInputs();
+            if( this.UpdateInputs() )
+            this.UpdateDisplaysStates();
         }
+        if( this.tDisplay.renderer.enabled != this.bEnable )
+            T.SetHierarchyVisibility(this.tDisplay, this.bEnable );
+        if (Menu.TypeCurrent != this.Type)
+            Menu.TypeCurrent = this.Type;
     }
 
-    private void UpdateButtonStates()
+    private void UpdateDisplaysStates()
     {
-        for (int i = 0; i < Buttons.Length; i++)
+        for (int i = 0; i < this.Buttons.Length; i++)
         {
-            if( i == this.iCurrentEnable )
-                Buttons[i].SetSelected(true);
-            else
-                Buttons[i].SetSelected(false);
-        }
-    }
-
-    private void ButtonVisibility( bool _visible)
-    {
-        for (int i = 0; i < Buttons.Length; i++)
-        {
-            Buttons[i].SetVisible(_visible);
-        }
-    }
-
-    private void HideSubMenus()
-    {
-        if (!bInit) Init();
-        T.Log("Hide SubMenus");
-        for (int iIndex = 0; iIndex < Buttons.Length; iIndex++)
-        {
-            if (SubMenu[iIndex] != null)
-            {
-                SubMenu[iIndex].SetActive(false);
+            if( i == this.iCurrentEnable ){
+                this.Buttons[i].SetSelected(true);
+            }else{
+                this.Buttons[i].SetSelected(false);
             }
         }
     }
 
-    private void UpdateInputs()
+    private void DisplaysVisibility(bool _visible)
     {
+        for (int i = 0; i < this.Buttons.Length; i++)
+        {
+            this.Buttons[i].SetVisible(_visible);
+        }
+    }
 
-        if(Inputs.Press(InputKb.Down) || Inputs.Press(InputKb.Left) )
+    private void HideMenus()
+    {
+        if (!this.bInit) this.Init();
+        T.Log("Hide SubMenus >");
+        for (int iIndex = 0; iIndex < Menu.List.Length; iIndex++)
         {
-            iCurrentEnable = iCurrentEnable < this.Buttons.Length - 1? iCurrentEnable+1 : 0;
-        }
-        if(Inputs.Press(InputKb.Up) || Inputs.Press(InputKb.Right) )
-        {
-            iCurrentEnable = iCurrentEnable > 0 ? iCurrentEnable-1 : this.Buttons.Length - 1;
-        }
-             /*
-        if( Inputs.Press(InputKb.Enter) )
-        {
-            switch (this.Buttons[this.iCurrentEnable].sName)
+            if (Menu.List[iIndex] != null)
             {
-                case "Play":
+                Menu.List[iIndex].SetStatus(false);
+            }
+        }
+    }
+
+    private bool UpdateInputs()
+    {
+        bool bUserHasEnterInput = false;
+
+        if (Inputs.Press(InputKb.Down) || Inputs.Press(InputKb.Left))
+        {
+            this.iCurrentEnable = this.iCurrentEnable < this.Buttons.Length - 1 ? this.iCurrentEnable + 1 : 0;
+            bUserHasEnterInput = true;
+        }
+        if (Inputs.Press(InputKb.Up) || Inputs.Press(InputKb.Right))
+        {
+            this.iCurrentEnable = this.iCurrentEnable > 0 ? this.iCurrentEnable - 1 : this.Buttons.Length - 1;
+            bUserHasEnterInput = true;
+        }
+        if (Inputs.Press(InputKb.Enter) || Inputs.Press(InputKb.Space))
+        {
+            switch (this.Buttons[this.iCurrentEnable].Type)
+            {
+                case ButtonTypes.Play:
+                    T.Log("Play");
                     Application.LoadLevel(1);
                     break;
-                case "Instructions":
-                    bInSubMenu = true;
+                case ButtonTypes.Instructions:
                     T.Log("Instructions");
-                    SetActive( false );
-                    SubMenu[iCurrentEnable].SetActive(true);
-                    T.SetHierarchyVisibility(this.transform, false);
+                    this.SetStatus(false);
+                    Menu.ChangeTo(MenuTypes.Instructions);
                     break;
-                case "Credits":
-                      bInSubMenu = true;
+                case ButtonTypes.Credits:
                     T.Log("Credits");
-                    SetActive(false);
-                    //SubMenu[iCurrentEnable].SetActive(true);
+                    Menu.ChangeTo(MenuTypes.Credits);
                     break;
-                case "Back":
-                    bInSubMenu = false;
+                case ButtonTypes.Back:
                     T.Log("Back");
-                    SetActive(false);
-                    if (MainMenu != null)
-                    {
-                        MainMenu.SetActive(true);
-                    }
+                    this.SetStatus(false);
+                    Menu.ChangeTo(MenuTypes.Main);
                     break;
             }
-        }   */
+            bUserHasEnterInput = true;
+        }
+        return bUserHasEnterInput;
     }
 }

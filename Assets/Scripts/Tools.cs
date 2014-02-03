@@ -369,6 +369,7 @@ public class T : MonoBehaviour
     
     static public void SetHierarchyVisibility( Transform _transform, bool _state )
     {
+        if (!(_transform.renderer == null)) _transform.renderer.enabled = _state;
         if( _transform.childCount != 0 ){
             //foreach child: Hide his hierachy
             for(int i = 0; i < _transform.childCount; i++){

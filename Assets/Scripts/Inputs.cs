@@ -39,67 +39,97 @@ public class Inputs : MonoBehaviour
     static public KeyCode[] keyCodesHelper;
     static public KeyCode[] keyCodesGame;
 
+    static public bool bInit = false;
+    static public bool bDebug = false;
+
     void Awake()
     {
-        kcUp = Up;
-        kcLeft = Left;
-        kcDown = Down;
-        kcRight = Right;
-        kcSpace = Space;
-        kcEnter = Enter;
-        kcCtrlR = CtrlR;
-        kcCtrlL = CtrlL;
+        this.InitUserData();
+        if (!Inputs.bInit) Inputs.Init();
     }
 
+    void Start()
+    {
+        this.InitUserData();
+        if (!Inputs.bInit) Inputs.Init();
+    }
+
+    private void InitUserData()
+    {
+        Inputs.kcUp = Up;
+        Inputs.kcLeft = Left;
+        Inputs.kcDown = Down;
+        Inputs.kcRight = Right;
+        Inputs.kcSpace = Space;
+        Inputs.kcEnter = Enter;
+        Inputs.kcCtrlR = CtrlR;
+        Inputs.kcCtrlL = CtrlL;
+    }
 
     static public bool Press(InputKb _Input)
     {
         bool bResult = Input.GetKeyDown(keyCodesGame[(int)_Input]);
-        if (bResult) T.Log("-" + _Input.ToString() + "- Press", TColors.White);
+        if (bResult && bDebug) T.Log("-" + _Input.ToString() + "- Press", TColors.White);
+        return bResult;
+    }
+
+    static public bool Release(InputKb _Input)
+    {
+        bool bResult = Input.GetKeyUp(keyCodesGame[(int)_Input]);
+        if (bResult && bDebug) T.Log("-" + _Input.ToString() + "- Press", TColors.White);
         return bResult;
     }
 
     static public bool Hold(InputKb _Input)
     {
         bool bResult = Input.GetKey(keyCodesGame[(int)_Input]);
-        if (bResult) T.Log("-" + _Input.ToString() + "- Hold", TColors.White);
+        if (bResult && bDebug) T.Log("-" + _Input.ToString() + "- Hold", TColors.White);
         return bResult;
     }
 
     static public bool Press(KeysHelp _Input)
     {
         bool bResult = Input.GetKeyDown(keyCodesHelper[(int)_Input]);
-        if (bResult) T.Log("-" + _Input.ToString() + "- Press", TColors.White);
+        if (bResult && bDebug) T.Log("-" + _Input.ToString() + "- Press", TColors.White);
         return bResult;
     }
 
     static public bool Hold(KeysHelp _Input)
     {
         bool bResult = Input.GetKey(keyCodesHelper[(int)_Input]);
-        if (bResult) T.DbgLog("-" + _Input.ToString() + "- Hold", TColors.White);
+        if (bResult && bDebug) T.DbgLog("-" + _Input.ToString() + "- Hold", TColors.White);
         return bResult;
     }
 
     static public void Init()
     {
-        KeysGame = new KeyCode[]{
-          kcUp,
-          kcLeft,
-          kcDown,
-          kcRight,
-          kcSpace,
-          kcEnter,
-          kcCtrlL,
-          kcCtrlR,
-        };
+        if (!Inputs.bInit){
+            GameObject goUserInputs = T.LoadGO("Inputs");
+            Inputs inputsUser = goUserInputs.GetComponent(typeof(Inputs)) as Inputs;
+            if (inputsUser != null && !Inputs.bInit)
+                inputsUser.InitUserData();
 
-        Helper.Init();
-        ArrayList Inputs = new ArrayList();
-        for (int i = 0; i < KeysGame.Length; ++i)
-        {
-            Inputs.Add(KeysGame[i]);
+            KeysGame = new KeyCode[]{
+              kcUp,
+              kcLeft,
+              kcDown,
+              kcRight,
+              kcSpace,
+              kcEnter,
+              kcCtrlL,
+              kcCtrlR,
+            };
+
+            Helper.Init();
+            ArrayList arrayInputs = new ArrayList();
+            for (int i = 0; i < KeysGame.Length; ++i)
+            {
+                arrayInputs.Add(KeysGame[i]);
+            }
+            InitInputsGame(arrayInputs);
+            Inputs.bInit = true;
+            T.Log("Inputs Initialized");
         }
-        InitInputsGame(Inputs);
     }
 
     static public void InitInputsGame(ArrayList _InputsKeyCodes)

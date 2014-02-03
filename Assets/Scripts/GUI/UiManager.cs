@@ -15,8 +15,6 @@ public class UiManager : MonoBehaviour
     public TextMesh DamageMultiplier = null;
     public TextMesh Wave = null;
 
-
-
     #region Singleton;
     private static readonly object _Rooth = new object();
     private static UiManager _Instance = null;
