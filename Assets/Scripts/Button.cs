@@ -29,7 +29,7 @@ public class Button : MonoBehaviour {
     {
         this.bSelected = _selected;
         this.DisplaySelected();
-       if( _selected )T.Log("btn " + this.Type.ToString() + " selected");
+       //if( _selected )T.Log("btn " + this.Type.ToString() + " selected");
     }
 
     public void SetVisible(bool _visible)

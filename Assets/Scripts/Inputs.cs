@@ -8,6 +8,7 @@ public enum InputKb
     Down,
     Right,
     Space,
+    Backspace,
     Enter,
     CtrlL,
     CtrlR,
@@ -21,6 +22,7 @@ public class Inputs : MonoBehaviour
     static public KeyCode kcDown = KeyCode.DownArrow;
     static public KeyCode kcRight = KeyCode.RightArrow;
     static public KeyCode kcSpace = KeyCode.Space;
+    static public KeyCode kcBackspace = KeyCode.Backspace;
     static public KeyCode kcEnter = KeyCode.Return;
     static public KeyCode kcCtrlR = KeyCode.RightControl;
     static public KeyCode kcCtrlL = KeyCode.LeftControl;
@@ -30,6 +32,7 @@ public class Inputs : MonoBehaviour
     public KeyCode Down = KeyCode.DownArrow;
     public KeyCode Right = KeyCode.RightArrow;
     public KeyCode Space = KeyCode.Space;
+    public KeyCode Backspace= KeyCode.Backspace;
     public KeyCode Enter = KeyCode.Return;
     public KeyCode CtrlR = KeyCode.RightControl;
     public KeyCode CtrlL = KeyCode.LeftControl;
@@ -61,6 +64,7 @@ public class Inputs : MonoBehaviour
         Inputs.kcDown = Down;
         Inputs.kcRight = Right;
         Inputs.kcSpace = Space;
+        Inputs.kcBackspace = Backspace;
         Inputs.kcEnter = Enter;
         Inputs.kcCtrlR = CtrlR;
         Inputs.kcCtrlL = CtrlL;

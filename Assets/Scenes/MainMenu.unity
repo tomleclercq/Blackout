@@ -1315,6 +1315,7 @@ MonoBehaviour:
   Down: 274
   Right: 275
   Space: 32
+  Backspace: 8
   Enter: 13
   CtrlR: 305
   CtrlL: 306
